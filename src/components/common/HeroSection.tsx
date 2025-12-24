@@ -88,7 +88,7 @@ export function HeroSection() {
           {/* Portrait Container */}
           <div className="relative z-10 w-[300px] h-[400px] sm:w-[380px] sm:h-[500px] rounded-t-full overflow-hidden shadow-2xl group">
             <Image
-              src="/hero-portrait.png"
+              src="/hero-portrait.jpg"
               alt="Portrait of Johnley Mark D. Delgado"
               fill
               className="object-cover object-top group-hover:scale-105 transition-all duration-700 ease-in-out"
