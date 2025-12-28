@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Download } from "lucide-react";
@@ -161,13 +162,15 @@ export function ExperienceSection() {
           <p className="text-gray-400 font-light mb-4 md:mb-0">
             Detailed project history available upon request.
           </p>
-          <Button
-            variant="default"
-            className="bg-white text-gray-900 hover:bg-gray-200 transition-colors shadow-sm"
-          >
-            Download Full Resume
-            <Download className="ml-2 w-4 h-4" />
-          </Button>
+          <Link href="/resume.pdf" target="_blank" download>
+            <Button
+              variant="default"
+              className="bg-white text-gray-900 hover:bg-gray-200 transition-colors shadow-sm"
+            >
+              Download Full Resume
+              <Download className="ml-2 w-4 h-4" />
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
