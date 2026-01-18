@@ -1,19 +1,27 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, Globe, Smartphone } from "lucide-react";
+import { GalleryModal } from "@/components/ui/gallery-modal";
+import { ExternalLink, Globe, Smartphone, Images } from "lucide-react";
+
+interface GalleryImage {
+  src: string;
+  title: string;
+}
 
 interface Project {
   title: string;
   description: string;
   type: "web" | "mobile";
-  url: string;
+  url?: string;
   image: string;
   tags: string[];
   featured?: boolean;
+  gallery?: GalleryImage[];
 }
 
 const projects: Project[] = [
@@ -37,9 +45,92 @@ const projects: Project[] = [
     tags: ["React Native", "Mobile", "iOS", "Android", "API Integration"],
     featured: true,
   },
+  {
+    title: "Project Cacti",
+    description:
+      "A beautifully designed recipe and cooking app featuring offline access, creator content, and an intuitive user experience. Focused on bringing premium culinary content to mobile users.",
+    type: "mobile",
+    image: "/projects/cacti/splash-screen.png",
+    tags: ["React Native", "Mobile", "iOS", "Android", "UI/UX"],
+    featured: true,
+    gallery: [
+      { src: "/projects/cacti/splash-screen.png", title: "Splash Screen" },
+      { src: "/projects/cacti/sign-in.png", title: "Sign In / Create Account" },
+      { src: "/projects/cacti/onboarding-creator.png", title: "Onboarding: Creator Content" },
+      { src: "/projects/cacti/onboarding-recipes.png", title: "Onboarding: Exclusive Recipes" },
+      { src: "/projects/cacti/onboarding-offline.png", title: "Onboarding: Offline Access" },
+      { src: "/projects/cacti/home-feed.png", title: "Home Feed" },
+      { src: "/projects/cacti/recipe-detail.png", title: "Recipe Detail" },
+      { src: "/projects/cacti/cooking-mode.png", title: "Cooking Mode (Offline)" },
+      { src: "/projects/cacti/search-filters.png", title: "Search & Filters" },
+      { src: "/projects/cacti/downloads-library.png", title: "Downloads / Offline Library" },
+    ],
+  },
+  {
+    title: "ParkSpot",
+    description:
+      "A smart parking lot finder app that helps users discover, review, and manage parking spaces. Features include search functionality, detailed lot information, and a rating system.",
+    type: "mobile",
+    image: "/projects/parkspot/parking-list.png",
+    tags: ["React Native", "Mobile", "iOS", "Android", "Maps"],
+    featured: true,
+    gallery: [
+      { src: "/projects/parkspot/parking-list.png", title: "Parking Lot List" },
+      { src: "/projects/parkspot/search-parking.png", title: "Search Parking" },
+      { src: "/projects/parkspot/parking-details-1.png", title: "Parking Details" },
+      { src: "/projects/parkspot/parking-details-2.png", title: "Parking Details (More Info)" },
+      { src: "/projects/parkspot/add-parking.png", title: "Add Parking Lot" },
+      { src: "/projects/parkspot/submit-review.png", title: "Submit Review & Rating" },
+    ],
+  },
+  {
+    title: "Xuan",
+    description:
+      "A comprehensive product management platform featuring product HQ, task boards, messaging, and activity feeds. Built to streamline team collaboration and product lifecycle management.",
+    type: "web",
+    url: "https://xuan-stg.chowaco-dev.com/",
+    image: "/projects/xuan/product-hq.png",
+    tags: ["React", "TypeScript", "Web App", "Product Management", "Full Stack"],
+    featured: true,
+    gallery: [
+      { src: "/projects/xuan/login.png", title: "Login Page" },
+      { src: "/projects/xuan/signup.png", title: "Sign Up Page" },
+      { src: "/projects/xuan/product-hq.png", title: "Product HQ" },
+      { src: "/projects/xuan/my-products.png", title: "My Products" },
+      { src: "/projects/xuan/product-detail.png", title: "Product Detail" },
+      { src: "/projects/xuan/product-planner.png", title: "Product Planner Panel" },
+      { src: "/projects/xuan/tasks.png", title: "Tasks" },
+      { src: "/projects/xuan/task-board.png", title: "Task Board" },
+      { src: "/projects/xuan/messages.png", title: "Messages" },
+      { src: "/projects/xuan/activity-feed.png", title: "Activity Feed" },
+      { src: "/projects/xuan/account-settings.png", title: "Account Settings" },
+    ],
+  },
 ];
 
 export function ProjectsSection() {
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [activeGallery, setActiveGallery] = useState<GalleryImage[]>([]);
+
+  const openGallery = (gallery: GalleryImage[]) => {
+    setActiveGallery(gallery);
+    setCurrentImageIndex(0);
+    setGalleryOpen(true);
+  };
+
+  const handleNext = () => {
+    setCurrentImageIndex((prev) =>
+      prev === activeGallery.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  const handlePrevious = () => {
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? activeGallery.length - 1 : prev - 1
+    );
+  };
+
   return (
     <section id="projects" className="bg-card py-20 lg:py-32 border-t border-border">
       <div className="max-w-7xl mx-auto px-6">
@@ -64,17 +155,31 @@ export function ProjectsSection() {
           {projects.map((project) => (
             <div
               key={project.title}
-              className="group relative bg-secondary rounded-xl overflow-hidden border border-border hover:border-primary/50 transition-all duration-500"
+              className={`group relative bg-secondary rounded-xl overflow-hidden border border-border hover:border-primary/50 transition-all duration-500 ${
+                project.gallery ? "cursor-pointer" : ""
+              }`}
+              onClick={
+                project.gallery ? () => openGallery(project.gallery!) : undefined
+              }
             >
               {/* Project Image */}
               <div className="relative h-64 overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  {project.type === "web" ? (
-                    <Globe className="w-20 h-20 text-gray-700" />
-                  ) : (
-                    <Smartphone className="w-20 h-20 text-gray-700" />
-                  )}
-                </div>
+                {project.gallery ? (
+                  <Image
+                    src={project.image}
+                    alt={project.title}
+                    fill
+                    className="object-contain object-center p-4"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    {project.type === "web" ? (
+                      <Globe className="w-20 h-20 text-gray-700" />
+                    ) : (
+                      <Smartphone className="w-20 h-20 text-gray-700" />
+                    )}
+                  </div>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
                 {/* Type Badge */}
@@ -87,6 +192,19 @@ export function ProjectsSection() {
                   </Badge>
                 </div>
 
+                {/* Gallery indicator */}
+                {project.gallery && (
+                  <div className="absolute top-4 right-4">
+                    <Badge
+                      variant="outline"
+                      className="bg-black/50 backdrop-blur-sm border-gray-700 text-white text-xs tracking-wider flex items-center gap-1"
+                    >
+                      <Images className="w-3 h-3" />
+                      {project.gallery.length}
+                    </Badge>
+                  </div>
+                )}
+
                 {/* Hover Overlay */}
                 <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
@@ -97,14 +215,17 @@ export function ProjectsSection() {
                   <h3 className="font-display text-2xl font-bold text-white group-hover:text-primary transition-colors">
                     {project.title}
                   </h3>
-                  <Link
-                    href={project.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-400 hover:text-white transition-colors"
-                  >
-                    <ExternalLink className="w-5 h-5" />
-                  </Link>
+                  {project.url && (
+                    <Link
+                      href={project.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-400 hover:text-white transition-colors"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <ExternalLink className="w-5 h-5" />
+                    </Link>
+                  )}
                 </div>
 
                 <p className="text-gray-400 text-sm leading-relaxed mb-4 font-light">
@@ -125,15 +246,35 @@ export function ProjectsSection() {
                 </div>
 
                 {/* CTA */}
-                <Link href={project.url} target="_blank" rel="noopener noreferrer">
-                  <Button
-                    variant="outline"
-                    className="w-full border-gray-700 text-white hover:bg-white hover:text-black transition-all duration-300"
-                  >
-                    View Project
-                    <ExternalLink className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
+                <div className={`flex gap-3 ${project.gallery && project.url ? "flex-col sm:flex-row" : ""}`}>
+                  {project.gallery && (
+                    <Button
+                      variant="outline"
+                      className={`${project.url ? "flex-1" : "w-full"} border-gray-700 text-white hover:bg-white hover:text-black transition-all duration-300`}
+                      onClick={() => openGallery(project.gallery!)}
+                    >
+                      View Gallery
+                      <Images className="w-4 h-4 ml-2" />
+                    </Button>
+                  )}
+                  {project.url && (
+                    <Link
+                      href={project.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className={project.gallery ? "flex-1" : "w-full"}
+                    >
+                      <Button
+                        variant="outline"
+                        className="w-full border-gray-700 text-white hover:bg-white hover:text-black transition-all duration-300"
+                      >
+                        View Project
+                        <ExternalLink className="w-4 h-4 ml-2" />
+                      </Button>
+                    </Link>
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -165,6 +306,16 @@ export function ProjectsSection() {
           </Link>
         </div>
       </div>
+
+      {/* Gallery Modal */}
+      <GalleryModal
+        images={activeGallery}
+        currentIndex={currentImageIndex}
+        isOpen={galleryOpen}
+        onClose={() => setGalleryOpen(false)}
+        onNext={handleNext}
+        onPrevious={handlePrevious}
+      />
     </section>
   );
 }
